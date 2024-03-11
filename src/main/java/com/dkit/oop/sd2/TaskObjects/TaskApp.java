@@ -57,7 +57,7 @@ public class TaskApp {
     }
 
     /**
-     * Meghan Keightley 9 Mar 2024
+     * Meghan Keightley 9 Mar 2024.
      */
     private void displayAllTasks() {
         try {

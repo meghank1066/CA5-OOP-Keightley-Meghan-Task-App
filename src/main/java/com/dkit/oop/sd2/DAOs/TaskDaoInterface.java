@@ -14,7 +14,7 @@ public interface TaskDaoInterface {
     List<Task> getAllTasks() throws DaoException;
 
     /**
-     * Meghan Keightley 9 Mar 2024
+     * Meghan Keightley 9 Mar 2024.
      */
     // Feature 2 - Find and Display a single Entity by Key
     Task getTaskById(int taskId) throws DaoException;

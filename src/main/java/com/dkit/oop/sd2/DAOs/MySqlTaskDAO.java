@@ -67,7 +67,7 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
     }
 
     /**
-     * Meghan Keightley 9 Mar 2024
+     * Meghan Keightley 9 Mar 2024.
      */
     @Override
     public Task deleteTaskById(int id) throws DaoException {
