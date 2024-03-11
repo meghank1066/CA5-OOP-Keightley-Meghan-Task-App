@@ -11,6 +11,10 @@ import java.sql.SQLException;
 
 
 public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
+
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     @Override
     public List<Task> getAllTasks() throws DaoException {
         List<Task> tasksList = new ArrayList<>();
@@ -35,6 +39,9 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         return tasksList;
     }
 
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     @Override
     public Task getTaskById(int id) throws DaoException {
         Task task = null;
@@ -59,6 +66,9 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         return task;
     }
 
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     @Override
     public Task deleteTaskById(int id) throws DaoException {
         Task deletedTask = null;

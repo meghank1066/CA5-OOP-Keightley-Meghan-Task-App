@@ -1,4 +1,4 @@
-
+package com.dkit.oop.sd2.TaskObjects;
 
 import com.dkit.oop.sd2.DAOs.MySqlTaskDAO;
 import com.dkit.oop.sd2.DAOs.TaskDaoInterface;
@@ -55,6 +55,9 @@ public class TaskApp {
         }
     }
 
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     private void displayAllTasks() {
         try {
             List<Task> allTasks = taskDao.getAllTasks();
@@ -66,7 +69,9 @@ public class TaskApp {
     }
 
 
-
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     private void displayTaskById() {
         try {
             System.out.print("Enter Task ID: ");
@@ -85,12 +90,19 @@ public class TaskApp {
         }
     }
 
+    /**
+     * Meghan Keightley 9 Mar 2024
+     * @param tasks
+     */
     private void displayTasks(List<Task> tasks) {
         for (Task task : tasks) {
             System.out.println(task);
         }
     }
 
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     private void deleteTaskById() {
         try {
             System.out.print("Enter Task ID to delete: ");

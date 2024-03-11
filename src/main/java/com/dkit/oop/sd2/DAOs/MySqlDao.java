@@ -35,6 +35,7 @@ public class MySqlDao {
         return connection;
     }
 
+
     public void freeConnection(Connection connection) throws DaoException {
         try {
             if (connection != null) {
@@ -50,7 +51,9 @@ public class MySqlDao {
     }
 
 //commit
-
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
     public Task createTask(String title, String status, String priority,
                            String description, Date dueDate) throws DaoException {
         Task task = null;
