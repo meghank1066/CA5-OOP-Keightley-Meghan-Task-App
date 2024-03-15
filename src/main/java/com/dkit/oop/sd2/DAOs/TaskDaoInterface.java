@@ -27,15 +27,20 @@ public interface TaskDaoInterface {
 
 
     /*Feature - 4*/
-    public Task insertTask(Task task) throws DaoException;
+    public Task addTask(Task task) throws DaoException;
 
 
     /**
      * Meghan Keightley 15 Mar 2024
      */
-////Feature 5 - Feature 5 – Update an existing Entity by ID
-//    public Task updateTaskbyID (int taskId) throws DaoException;
-//
+    // Feature 5 - Update an existing Entity by ID
+    Task updateTaskById(int taskId, Task updatedTask) throws DaoException;
+
+    /**
+     * Meghan Keightley 15 Mar 2024
+     */
+    // Feature 6 -  Get list of entities matching a filter (based on DTO object)
+    List<Task> FilteringTasks(Task filter) throws DaoException;
 
 
 }

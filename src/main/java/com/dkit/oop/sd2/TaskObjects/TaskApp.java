@@ -5,6 +5,8 @@ import com.dkit.oop.sd2.DAOs.TaskDaoInterface;
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -34,6 +36,8 @@ public class TaskApp {
         System.out.println("2. Display Task by ID");
         System.out.println("3. Delete Task by ID");
         System.out.println("4. Add Task by ID");
+        System.out.println("5. Update Task by ID"); // m
+        System.out.println("6. Filter by Status & Priority"); // m
 
         System.out.println("0. Exit");
     }
@@ -56,6 +60,12 @@ public class TaskApp {
             case "4":
                 addedTask = insertTask();
                 System.out.println("Added Task: "+ addedTask);
+                break;
+            case "5": // Update Task by ID
+                updateTask();
+                break;
+            case "6": // Filter Tasks
+                filterTasks();
                 break;
             case "0":
                 System.out.println("Exiting...");
@@ -138,23 +148,58 @@ public class TaskApp {
         System.out.println("Task Title:");
         String title = sc.nextLine();
 
-        System.out.println("Task Status (DONE,PROGRESS,OPEN) :");
-        String status = sc.nextLine();
+        String status;
+        do {
+            System.out.println("Task Status (DONE, PROGRESS, OPEN):");
+            status = sc.nextLine().toUpperCase(); // Convert input to uppercase for case-insensitivity
+            if (!status.equals("DONE") && !status.equals("PROGRESS") && !status.equals("OPEN")) {
+                System.out.println("Invalid status. Please enter one of: DONE, PROGRESS, OPEN");
+            }
+        } while (!status.equals("DONE") && !status.equals("PROGRESS") && !status.equals("OPEN"));
 
-        System.out.println("Task Priority (CRITICAL, HIGH, MEDIUM, LOW, MIN) :");
-        String priority = sc.nextLine();
+
+        String priority;
+        System.out.println("Task Priority (CRITICAL, HIGH, MEDIUM, LOW, MIN):");
+        while (true) {
+            priority = sc.nextLine();
+            if (priority.equalsIgnoreCase("CRITICAL") || priority.equalsIgnoreCase("HIGH") ||
+                    priority.equalsIgnoreCase("MEDIUM") || priority.equalsIgnoreCase("LOW") ||
+                    priority.equalsIgnoreCase("MIN")) {
+                break;
+            }
+            System.out.println("Invalid priority. Please enter one of: CRITICAL, HIGH, MEDIUM, LOW, MIN");
+        }
+
 
         System.out.println("Task Description:");
         String description = sc.nextLine();
 
         /* Change to allow user to insert Date
          * will need to use a Parser */
-        Date due_date = new Date();
+        String dueDateStr = null;
+        Date due_date = null;
+
+
+        // Prompt user for date until a valid format is provided
+        while (due_date == null) {
+            System.out.println("Task Due Date (YYYY-MM-DD):");
+            dueDateStr = sc.nextLine();
+
+            try {
+                // Attempt to parse the due date string
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                due_date = sdf.parse(dueDateStr);
+            } catch (ParseException e) {
+                // If parsing fails, inform the user and prompt for input again
+                System.out.println("Invalid date format. Please enter the date in the format YYYY-MM-DD.");
+            }
+        }
 
         Task newTask = new Task(title, status, priority, description, due_date);
 
+
         try {
-            taskDao.insertTask(newTask);
+            taskDao.addTask(newTask);
             System.out.println("Task inserted successfully!");
         } catch (DaoException e) {
             System.out.println("Error inserting task: " + e.getMessage());
@@ -162,6 +207,65 @@ public class TaskApp {
 
         return newTask;
     }
+
+
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
+    /*Feature 5 - Updating Task */
+    private Task updateTask() {
+        try {
+            System.out.print("Enter Task ID to update: ");
+            int taskId = Integer.parseInt(sc.nextLine());
+
+            Task existingTask = taskDao.getTaskById(taskId);
+            if (existingTask != null) {
+                // Prompt the user to enter updated task details
+                System.out.println("Enter updated task details:");
+
+                // Get updated task details from user input
+                Task updatedTask = insertTask();
+                updatedTask.setTaskId(taskId);
+
+                // Update the task in the database
+                Task updated = taskDao.updateTaskById(taskId, updatedTask);
+                return updated;
+            } else {
+                System.out.println("Task with ID " + taskId + " not found.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number for Task ID.");
+        } catch (DaoException e) {
+            System.out.println("Error updating task: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Meghan Keightley 9 Mar 2024
+     */
+    private void filterTasks() {
+        Task filter = new Task();
+
+        System.out.println("Enter Filter Criteria:");
+        System.out.print("Task Status (DONE, PROGRESS, OPEN): ");
+        filter.setStatus(sc.nextLine().toUpperCase());
+        System.out.print("Task Priority (CRITICAL, HIGH, MEDIUM, LOW, MIN): ");
+        filter.setPriority(sc.nextLine());
+
+        try {
+            List<Task> filteredTasks = taskDao.FilteringTasks(filter);
+            if (!filteredTasks.isEmpty()) {
+                System.out.println("Filtered Tasks:");
+                displayTasks(filteredTasks);
+            } else {
+                System.out.println("No tasks found matching the filter criteria.");
+            }
+        } catch (DaoException e) {
+            System.out.println("Error filtering tasks: " + e.getMessage());
+        }
+    }
+
 
 }
 
