@@ -2,12 +2,10 @@ package com.dkit.oop.sd2.DAOs;
 
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
 
 
 public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
@@ -88,6 +86,60 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         }
         return deletedTask;
     }
+
+
+    /* Feature 4 - Insert new Task to Database */
+    public Task insertTask(Task task) throws DaoException {
+
+        String query = "INSERT INTO tasks (title, status, priority, description, due_date) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection connection = this.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, task.getTitle());
+            preparedStatement.setString(2, task.getStatus());
+            preparedStatement.setString(3, task.getPriority());
+            preparedStatement.setString(4, task.getDescription());
+            preparedStatement.setDate(5, new Date(task.getDueDate().getTime()));
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException("Error in insertData(): " + e.getMessage());
+        }
+
+        return null;
+    }
+
+//    @Override
+//    public Task updateTaskbyID (int taskId) throws DaoException {
+    //new task
+//        try (Connection connection = this.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(
+//                     "UPDATE tasks SET title = ?, status = ?, priority = ?, description = ?, due_date = ? WHERE id = ?")) {
+//
+//            // Set parameters for the prepared statement
+//            preparedStatement.setString(1, updatedTask.getTitle());
+//            preparedStatement.setString(2, updatedTask.getStatus());
+//            preparedStatement.setString(3, updatedTask.getPriority());
+//            preparedStatement.setString(4, updatedTask.getDescription());
+//            preparedStatement.setDate(5, new Date(updatedTask.getDueDate().getTime()));
+//            preparedStatement.setInt(6, taskId);
+//
+//            // Execute the update operation
+//            int rowsAffected = preparedStatement.executeUpdate();
+//
+//            if (rowsAffected > 0) {
+//                // If the update was successful, return the updated task
+//                return updatedTask;
+//            }
+//
+//        } catch (SQLException e) {
+//            throw new DaoException("Error in updateTaskById(): " + e.getMessage());
+//        }
+//
+//        // If no rows were affected, return null indicating update failure
+//        return null;
+//    }
 
 
 }

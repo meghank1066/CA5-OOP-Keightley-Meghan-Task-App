@@ -26,5 +26,17 @@ public interface TaskDaoInterface {
     public Task deleteTaskById (int taskId ) throws DaoException;
 
 
+    /*Feature - 4*/
+    public Task insertTask(Task task) throws DaoException;
+
+
+    /**
+     * Meghan Keightley 15 Mar 2024
+     */
+////Feature 5 - Feature 5 – Update an existing Entity by ID
+//    public Task updateTaskbyID (int taskId) throws DaoException;
+//
+
+
 }
 

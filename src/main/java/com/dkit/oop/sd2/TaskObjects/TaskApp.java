@@ -4,6 +4,8 @@ import com.dkit.oop.sd2.DAOs.MySqlTaskDAO;
 import com.dkit.oop.sd2.DAOs.TaskDaoInterface;
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,12 +33,15 @@ public class TaskApp {
         System.out.println("1. Display All Tasks");
         System.out.println("2. Display Task by ID");
         System.out.println("3. Delete Task by ID");
-        System.out.println("4. Exit");
+        System.out.println("4. Add Task by ID");
+
+        System.out.println("0. Exit");
     }
 
     public void handleMenu() {
 
         String choice = sc.nextLine();
+        Task addedTask = null;
 
         switch (choice) {
             case "1":
@@ -49,6 +54,10 @@ public class TaskApp {
                 deleteTaskById();
                 break;
             case "4":
+                addedTask = insertTask();
+                System.out.println("Added Task: "+ addedTask);
+                break;
+            case "0":
                 System.out.println("Exiting...");
                 System.exit(0);
             default:
@@ -121,6 +130,39 @@ public class TaskApp {
             System.out.println("Error deleting task: " + e.getMessage());
         }
     }
+
+
+    /*Feature 4 - inserting Task */
+    private Task insertTask() {
+
+        System.out.println("Task Title:");
+        String title = sc.nextLine();
+
+        System.out.println("Task Status (DONE,PROGRESS,OPEN) :");
+        String status = sc.nextLine();
+
+        System.out.println("Task Priority (CRITICAL, HIGH, MEDIUM, LOW, MIN) :");
+        String priority = sc.nextLine();
+
+        System.out.println("Task Description:");
+        String description = sc.nextLine();
+
+        /* Change to allow user to insert Date
+         * will need to use a Parser */
+        Date due_date = new Date();
+
+        Task newTask = new Task(title, status, priority, description, due_date);
+
+        try {
+            taskDao.insertTask(newTask);
+            System.out.println("Task inserted successfully!");
+        } catch (DaoException e) {
+            System.out.println("Error inserting task: " + e.getMessage());
+        }
+
+        return newTask;
+    }
+
 }
 
 
