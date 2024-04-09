@@ -42,6 +42,11 @@ public interface TaskDaoInterface {
     // Feature 6 -  Get list of entities matching a filter (based on DTO object)
     List<Task> FilteringTasks(Task filter) throws DaoException;
 
+    /**
+     * Meghan Keightley 06 April 2024
+     */
+    // Feature 7 -  Converts List of entities to a JSON strong :)
+    String JsonConversionOfTasks() throws DaoException;
 
 }
 

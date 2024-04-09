@@ -2,14 +2,13 @@ package com.dkit.oop.sd2.DAOs;
 
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
+import com.dkit.oop.sd2.JSON.JsonConv;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
-
     /**
      * Meghan Keightley 9 Mar 2024
      */
@@ -167,5 +166,23 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
             throw new DaoException("Error in findTasksUsingFilter(): " + e.getMessage());
         }
         return filteredTasks;
+    }
+
+
+//     * Meghan Keightley 9 Mar 2024
+
+//    //converting to json
+    @Override
+    public String JsonConversionOfTasks() {
+        try {
+            List<Task> ConvertAllTasks = getAllTasks();
+            String json = JsonConv.TaskConversionToJson(ConvertAllTasks);
+            System.out.println("Json display of tasks:");
+            System.out.println(json);
+            return json;
+        } catch (DaoException e) {
+            System.out.println("Error converting tasks to Json: " + e.getMessage());
+            return null;
+        }
     }
 }

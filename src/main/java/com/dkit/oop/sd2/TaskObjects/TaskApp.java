@@ -4,6 +4,8 @@ import com.dkit.oop.sd2.DAOs.MySqlTaskDAO;
 import com.dkit.oop.sd2.DAOs.TaskDaoInterface;
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
+import com.dkit.oop.sd2.JSON.JsonConv;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,7 @@ public class TaskApp {
             taskApp.handleMenu();
         }
     }
+
     Scanner sc = new Scanner(System.in);
     private TaskDaoInterface taskDao;
 
@@ -32,12 +35,13 @@ public class TaskApp {
     }
 
     public void displayMenu() {
-        System.out.println("1. Display All Tasks");
-        System.out.println("2. Display Task by ID");
-        System.out.println("3. Delete Task by ID");
-        System.out.println("4. Add Task by ID");
+        System.out.println("1. Display All Tasks"); // m
+        System.out.println("2. Display Task by ID"); // m
+        System.out.println("3. Delete Task by ID"); // m
+        System.out.println("4. Add Task by ID"); // m
         System.out.println("5. Update Task by ID"); // m
         System.out.println("6. Filter by Status & Priority"); // m
+        System.out.println("7. Convert List of Entities to a JSON String "); // m
 
         System.out.println("0. Exit");
     }
@@ -59,13 +63,16 @@ public class TaskApp {
                 break;
             case "4":
                 addedTask = insertTask();
-                System.out.println("Added Task: "+ addedTask);
+                System.out.println("Added Task: " + addedTask);
                 break;
-            case "5": // Update Task by ID
+            case "5":
                 updateTask();
                 break;
-            case "6": // Filter Tasks
+            case "6":
                 filterTasks();
+                break;
+            case "7":
+                JsonConversionOfTasks();
                 break;
             case "0":
                 System.out.println("Exiting...");
@@ -112,7 +119,7 @@ public class TaskApp {
 
     /**
      * Meghan Keightley 9 Mar 2024
-     * @param tasks
+     *
      */
     private void displayTasks(List<Task> tasks) {
         for (Task task : tasks) {
@@ -267,6 +274,14 @@ public class TaskApp {
     }
 
 
+    private void JsonConversionOfTasks() {
+        try {
+            List<Task> ConvertAllTasks = taskDao.getAllTasks();
+            String json = JsonConv.TaskConversionToJson(ConvertAllTasks);
+            System.out.println("JSON representation of tasks:");
+            System.out.println(json);
+        } catch (DaoException e) {
+            System.out.println("Error converting tasks to JSON: " + e.getMessage());
+        }
+    }
 }
-
-
