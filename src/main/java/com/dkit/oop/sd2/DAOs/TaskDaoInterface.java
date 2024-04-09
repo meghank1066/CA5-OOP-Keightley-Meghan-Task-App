@@ -23,7 +23,7 @@ public interface TaskDaoInterface {
      * Meghan Keightley 9 Mar 2024
      */
     // Feature 3 - Placeholder for future method
-    public Task deleteTaskById (int taskId ) throws DaoException;
+    public Task deleteTaskById(int taskId) throws DaoException;
 
 
     /*Feature - 4*/
@@ -45,8 +45,21 @@ public interface TaskDaoInterface {
     /**
      * Meghan Keightley 06 April 2024
      */
-    // Feature 7 -  Converts List of entities to a JSON strong :)
+    // Feature 7 -  Converts List of entities to a json strong :)
     String JsonConversionOfTasks() throws DaoException;
 
+
+    /**
+     * Meghan Keightley 08 April 2024
+     */
+//  Feature 8 -  Convert a single Entity by Key as a json String
+    String JsonFormEntityByKey(int taskId) throws DaoException;
+
+
+
+
+
+
+//end of file
 }
 

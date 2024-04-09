@@ -185,4 +185,19 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
             return null;
         }
     }
+
+    @Override
+    public String JsonFormEntityByKey(int taskId) throws DaoException {
+        Task task = getTaskById(taskId);
+        List<Task> singleTaskList = new ArrayList<>();
+        singleTaskList.add(task);
+        return JsonConv.TaskConversionToJson(singleTaskList);
+    }
+
+
+
+
+
+
+    //end of file
 }

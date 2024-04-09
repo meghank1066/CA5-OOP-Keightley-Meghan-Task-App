@@ -38,10 +38,11 @@ public class TaskApp {
         System.out.println("1. Display All Tasks"); // m
         System.out.println("2. Display Task by ID"); // m
         System.out.println("3. Delete Task by ID"); // m
-        System.out.println("4. Add Task by ID"); // m
+        System.out.println("4. Add Task by ID");
         System.out.println("5. Update Task by ID"); // m
         System.out.println("6. Filter by Status & Priority"); // m
         System.out.println("7. Convert List of Entities to a JSON String "); // m
+        System.out.println("8. Convert a single Entity by Key as a JSON String  "); // m
 
         System.out.println("0. Exit");
     }
@@ -74,11 +75,14 @@ public class TaskApp {
             case "7":
                 JsonConversionOfTasks();
                 break;
+            case "8":
+                JsonFormEntityByKey();
+                break;
             case "0":
                 System.out.println("Exiting...");
                 System.exit(0);
             default:
-                System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+                System.out.println("Invalid choice. Please enter a number between 1 and 10.");
         }
     }
 
@@ -119,7 +123,6 @@ public class TaskApp {
 
     /**
      * Meghan Keightley 9 Mar 2024
-     *
      */
     private void displayTasks(List<Task> tasks) {
         for (Task task : tasks) {
@@ -296,4 +299,35 @@ public class TaskApp {
             System.out.println("Error converting tasks to Json: " + e.getMessage());
         }
     }
+
+
+    private void JsonFormEntityByKey() {
+        try {
+            System.out.print("Enter Task ID: ");
+            int taskId = Integer.parseInt(sc.nextLine());
+            String jsonTask = taskDao.JsonFormEntityByKey(taskId);
+            if (jsonTask != null) {
+                System.out.println("Json representation of task with ID " + taskId + ":");
+                String[] lines = jsonTask.split("\\r?\\n");
+                StringBuilder formattedJson = new StringBuilder();
+                for (int i = 0; i < lines.length; i++) {
+                    formattedJson.append(lines[i]);
+                    if (i < lines.length - 1) {
+                        formattedJson.append(",\n");
+                    }
+                }
+                System.out.println(formattedJson.toString());
+            } else {
+                System.out.println("Task with ID " + taskId + " not found.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number for Task ID.");
+        } catch (DaoException e) {
+            System.out.println("Error converting task to Json: " + e.getMessage());
+        }
+    }
+
+
+
+//end of file
 }
