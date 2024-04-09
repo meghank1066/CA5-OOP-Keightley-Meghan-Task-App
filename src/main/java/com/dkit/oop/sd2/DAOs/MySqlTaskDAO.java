@@ -181,7 +181,7 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
             System.out.println(json);
             return json;
         } catch (DaoException e) {
-            System.out.println("Error converting tasks to Json: " + e.getMessage());
+            System.out.println("Error converting tasks to JSON: " + e.getMessage());
             return null;
         }
     }

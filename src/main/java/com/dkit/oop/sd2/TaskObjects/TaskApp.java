@@ -273,15 +273,27 @@ public class TaskApp {
         }
     }
 
-
+    /**
+     * Meghan Keightley 7th April 2024
+     */
     private void JsonConversionOfTasks() {
         try {
             List<Task> ConvertAllTasks = taskDao.getAllTasks();
             String json = JsonConv.TaskConversionToJson(ConvertAllTasks);
+
+            StringBuilder cleanedUpJson = new StringBuilder();
+            String[] parts = json.split("},");
+            for (int i = 0; i < parts.length; i++) {
+                if (i != 0) {
+                    cleanedUpJson.append("},\n");
+                }
+                cleanedUpJson.append(parts[i].trim());
+            }
+
             System.out.println("JSON representation of tasks:");
-            System.out.println(json);
+            System.out.println(cleanedUpJson.toString());
         } catch (DaoException e) {
-            System.out.println("Error converting tasks to JSON: " + e.getMessage());
+            System.out.println("Error converting tasks to Json: " + e.getMessage());
         }
     }
 }
