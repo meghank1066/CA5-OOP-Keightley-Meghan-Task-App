@@ -20,7 +20,7 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
+                int id = resultSet.getInt("task_id"); // Corrected column name
                 String title = resultSet.getString("title");
                 String status = resultSet.getString("status");
                 String priority = resultSet.getString("priority");
@@ -36,15 +36,11 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         return tasksList;
     }
 
-    /**
-     * Meghan Keightley 9 Mar 2024
-     */
     @Override
     public Task getTaskById(int id) throws DaoException {
         Task task = null;
         try (Connection connection = this.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tasks WHERE id = ?");
-        ) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tasks WHERE task_id = ?")) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -62,7 +58,6 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         }
         return task;
     }
-
     /**
      * Meghan Keightley 9 Mar 2024.
      */
@@ -194,6 +189,53 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
         return JsonConv.TaskConversionToJson(singleTaskList);
     }
 
+
+    @Override
+    public Task getEntityById(int id) throws DaoException {
+        Task task = null;
+        try (Connection connection = this.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tasks WHERE id = ?");
+        ) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String title = resultSet.getString("title");
+                    String status = resultSet.getString("status");
+                    String priority = resultSet.getString("priority");
+                    String description = resultSet.getString("description");
+                    java.sql.Date dueDate = resultSet.getDate("due_date");
+
+                    task = new Task(id, title, status, priority, description, dueDate);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Error in getEntityById(): " + e.getMessage());
+        }
+        return task;
+    }
+
+    @Override
+    public Task getNewTaskById(int id) throws DaoException {
+        Task task = null;
+        try (Connection connection = this.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tasks WHERE id = ?")) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String title = resultSet.getString("title");
+                    String status = resultSet.getString("status");
+                    String priority = resultSet.getString("priority");
+                    String description = resultSet.getString("description");
+                    java.sql.Date dueDate = resultSet.getDate("due_date");
+
+                    task = new Task(id, title, status, priority, description, dueDate);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Error in getTaskById(): " + e.getMessage());
+        }
+        return task;
+    }
 
 
 

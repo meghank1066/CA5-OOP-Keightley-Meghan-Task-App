@@ -28,7 +28,16 @@ public class Task {
         this.dueDate = dueDate;
     }
 
+
+
     public Task() {
+        // Initialize taskId to 0
+        this.taskId = 0;
+        this.title = title;
+        this.status = status;
+        this.priority = priority;
+        this.description = description;
+        this.dueDate = dueDate;
     }
 
     public int getTaskId() {

@@ -32,4 +32,8 @@ public class JsonConv {
     public static String TaskConversionToJson(List<Task> list) {
         return gson.toJson(list);
     }
+
+    public String entityToJson(Task t) {
+        return gson.toJson(t);
+    }
 }

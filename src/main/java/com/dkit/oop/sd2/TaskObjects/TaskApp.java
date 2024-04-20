@@ -301,6 +301,7 @@ public class TaskApp {
     }
 
 
+
     private void JsonFormEntityByKey() {
         try {
             System.out.print("Enter Task ID: ");
@@ -308,15 +309,7 @@ public class TaskApp {
             String jsonTask = taskDao.JsonFormEntityByKey(taskId);
             if (jsonTask != null) {
                 System.out.println("Json representation of task with ID " + taskId + ":");
-                String[] lines = jsonTask.split("\\r?\\n");
-                StringBuilder formattedJson = new StringBuilder();
-                for (int i = 0; i < lines.length; i++) {
-                    formattedJson.append(lines[i]);
-                    if (i < lines.length - 1) {
-                        formattedJson.append(",\n");
-                    }
-                }
-                System.out.println(formattedJson.toString());
+                System.out.println(jsonTask);
             } else {
                 System.out.println("Task with ID " + taskId + " not found.");
             }
