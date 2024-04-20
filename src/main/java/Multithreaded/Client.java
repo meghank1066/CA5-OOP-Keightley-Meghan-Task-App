@@ -93,15 +93,40 @@ public class Client {
         System.out.println("=========================================");
     }
 
-    private void displayAllEntities(PrintWriter out, BufferedReader in)throws IOException{
+//    private void displayAllEntities(PrintWriter out, BufferedReader in)throws IOException{
+//        out.println("get all");
+//
+//        System.out.println("Response from server (All Entities):");
+//        String line;
+//        while((line = in.readLine()) != null){
+//            System.out.println(line);
+//        }
+//    }
+
+    private void displayAllEntities(PrintWriter out, BufferedReader in) throws IOException {
         out.println("get all");
 
         System.out.println("Response from server (All Entities):");
+        StringBuilder cleanedUpJson = new StringBuilder();
         String line;
-        while((line = in.readLine()) != null){
-            System.out.println(line);
+        while ((line = in.readLine()) != null) {
+            cleanedUpJson.append(line.trim());
         }
+
+        // Format the JSON entities cleanly
+        String[] parts = cleanedUpJson.toString().split("\\},");
+        cleanedUpJson = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i != 0) {
+                cleanedUpJson.append("},\n");
+            }
+            cleanedUpJson.append(parts[i].trim());
+        }
+
+        System.out.println("JSON representation of tasks:");
+        System.out.println(cleanedUpJson.toString());
     }
+
 
 
     private void displayEntityById(PrintWriter out, BufferedReader in, Scanner sc) {

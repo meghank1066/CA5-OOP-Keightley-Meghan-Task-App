@@ -74,6 +74,8 @@ class ClientHandler implements Runnable {
         }
     }
 
+    //feature 9
+    // meghan
     private void displayEntityById(int id, PrintWriter out) {
         try {
             TaskDaoInterface taskDao = new MySqlTaskDAO();
@@ -86,10 +88,12 @@ class ClientHandler implements Runnable {
         }
     }
 
+    //feature 10
+    //meghan
     private void displayAllEntities(PrintWriter out) {
         try {
             TaskDaoInterface taskDao = new MySqlTaskDAO();
-            List<Task> tasks = taskDao.getAllTasks();
+            List<Task> tasks = taskDao.getnewAllTasks();
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(tasks);
             out.println(jsonResponse);

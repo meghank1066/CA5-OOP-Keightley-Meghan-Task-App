@@ -56,13 +56,11 @@ public interface TaskDaoInterface {
     String JsonFormEntityByKey(int taskId) throws DaoException;
 
 //feature 9
-Task getEntityById(int entityId) throws DaoException;
 
-
-//feature 9.5
-// Feature 1 - Get all Entities
 public Task getNewTaskById(int id) throws DaoException;
 
+    //feature 10
+    public List<Task> getnewAllTasks() throws DaoException;
 
 
 //end of file
