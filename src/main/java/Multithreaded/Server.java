@@ -1,9 +1,6 @@
 package Multithreaded;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -60,67 +57,33 @@ class ClientHandler implements Runnable {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-            String requestType = in.readLine();
-            if (requestType.startsWith("DISPLAY_BY_ID")) {
-                int id = Integer.parseInt(requestType.substring(requestType.indexOf(":") + 1));
-                displayEntityById(id, out);
-            } else if (requestType.equals("get all")) {
-                displayAllEntities(out);
-            } else if (requestType.equals("ADD_NEW_TASK")) {
-                addNewTask2(in, out);
-            } else {
-                out.println("Unsupported request type: " + requestType);
+            String requestType;
+            while ((requestType = in.readLine()) != null) {
+                if (requestType.equals("QUITTING")) {
+                    System.out.println("client " + clientNumber + " has disconnected.");
+                    break;
+                }
+
+                if (requestType.startsWith("DISPLAY_BY_ID")) {
+                    int id = Integer.parseInt(requestType.substring(requestType.indexOf(":") + 1));
+                    displayEntityById(id, out);
+                } else if (requestType.equals("get all")) {
+                    displayAllEntities(out);
+                } else if (requestType.equals("ADD_NEW_TASK")) {
+                    addNewTask2(in, out);
+                } else if (requestType.startsWith("DELETE_TASK")) {
+                    int taskIdToDelete = Integer.parseInt(requestType.substring(requestType.indexOf(":") + 1));
+                    deleteNewTaskById(taskIdToDelete, out);
+                } else if (requestType.equals("GET_IMAGE_LIST")) {
+                    sendImageList(out);
+                } else {
+                    out.println("Sorry, this is an unsupported request type: " + requestType);
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-//    //feature 9
-//    // meghan
-//    private void displayEntityById(int id, PrintWriter out) {
-//        try {
-//            TaskDaoInterface taskDao = new MySqlTaskDAO();
-//            Task task = taskDao.getNewTaskById(id);
-//            Gson gson = new Gson();
-//            String jsonResponse = (task != null) ? gson.toJson(task) : "{\"error\": \"Entity not found\"}";
-//            out.println(jsonResponse);
-//        } catch (DaoException e) {
-//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
-//        }
-//    }
-//
-//    //feature 10
-//    //meghan
-//    private void displayAllEntities(PrintWriter out) {
-//        try {
-//            TaskDaoInterface taskDao = new MySqlTaskDAO();
-//            List<Task> tasks = taskDao.getnewAllTasks();
-//            Gson gson = new Gson();
-//            String jsonResponse = gson.toJson(tasks);
-//            out.println(jsonResponse);
-//        } catch (DaoException e) {
-//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
-//        }
-//    }
-//
-//    //new task
-//
-//    //feature 11
-//    // meghan
-//    private void addNewTask2(BufferedReader in, PrintWriter out) {
-//        try {
-//            String json = in.readLine();
-//            Gson gson = new Gson();
-//            Task task = gson.fromJson(json, Task.class);
-//            TaskDaoInterface taskDao = new MySqlTaskDAO();
-//            Task newTask = taskDao.addTask(task);
-//            String jsonResponse = gson.toJson(newTask);
-//            out.println(jsonResponse);
-//        } catch (DaoException | IOException e) {
-//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
-//        }
-//    }
 
     // Feature 9: Display Task by ID
     private void displayEntityById(int id, PrintWriter out) {
@@ -135,19 +98,7 @@ class ClientHandler implements Runnable {
         }
     }
 
-    // Feature 10: Display All Tasks
-//    private void displayAllEntities(PrintWriter out) {
-//        try {
-//            TaskDaoInterface taskDao = new MySqlTaskDAO();
-//            List<Task> tasks = taskDao.getAllTasks(); // Update to use getAllTasks method
-//            Gson gson = new Gson();
-//            String jsonResponse = gson.toJson(tasks);
-//            out.println(jsonResponse);
-//        } catch (DaoException e) {
-//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
-//        }
-//    }
-
+    //Feature 10: Display All Tasks
     private void displayAllEntities(PrintWriter out) {
         try {
             TaskDaoInterface taskDao = new MySqlTaskDAO();
@@ -178,9 +129,64 @@ class ClientHandler implements Runnable {
         }
     }
 
+    //Feature 12: Delete Task
+    private void deleteNewTaskById(int taskId, PrintWriter out) {
+        try {
+            TaskDaoInterface taskDao = new MySqlTaskDAO();
+            boolean deletionSuccessful = taskDao.deleteNewTaskById(taskId);
+            if (deletionSuccessful) {
+                out.println("Task deleted successfully.");
+            } else {
+                out.println("Task with ID " + taskId + " not found.");
+            }
+        } catch (DaoException e) {
+            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+    private void sendImageList(PrintWriter out) {
+        try {
+            File folder = new File("images");
+
+            // Check if the folder exists and is a directory
+            if (folder.exists() && folder.isDirectory()) {
+                String[] imageFiles = folder.list();
+                if (imageFiles != null && imageFiles.length > 0) {
+                    Gson gson = new Gson();
+                    String jsonResponse = gson.toJson(imageFiles);
+                    out.println(jsonResponse);
+                    return; // Exit the method after sending the response
+                }
+            }
+            // If the folder is empty or does not exist
+            out.println("{\"error\": \"No images found\"}");
+        } catch (Exception e) {
+            // Handle any exception that might occur during file reading
+            e.printStackTrace();
+            out.println("{\"error\": \"Error reading image files\"}");
+        }
+    }
 
 
+
+    // Implement the sendImageFile method to send the selected image file to the client
+    private void sendImageFile(String fileName, Socket clientSocket) throws IOException {
+        File file = new File("images/" + fileName);
+        byte[] buffer = new byte[4096];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        OutputStream outputStream = clientSocket.getOutputStream();
+
+        int bytesRead;
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        fileInputStream.close();
+        outputStream.close();
+    }
 
 }
+
+
 
 

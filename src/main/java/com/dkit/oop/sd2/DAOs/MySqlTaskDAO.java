@@ -297,6 +297,22 @@ public class MySqlTaskDAO extends MySqlDao implements TaskDaoInterface {
     }
 
 
+//feature 12
+@Override
+public boolean deleteNewTaskById(int id) throws DaoException {
+    try (Connection connection = this.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM tasks WHERE id = ?")) {
+
+        preparedStatement.setInt(1, id);
+        int rowsAffected = preparedStatement.executeUpdate();
+
+        // If rowsAffected > 0, it means a task was deleted successfully
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        throw new DaoException("Error in deleteTaskById(): " + e.getMessage());
+    }
+}
 
 
 

@@ -66,6 +66,8 @@ public interface TaskDaoInterface {
     //feature 11
     public Task addNewTask(Task task) throws DaoException;
 
+    //feature 12
+    public boolean deleteNewTaskById(int taskId) throws DaoException;
 
 //end of file
 }

@@ -29,7 +29,7 @@ public class Client {
 
             System.out.println("Connected to server.");
 
-            Scanner sc = new Scanner(System.in); // Create Scanner object outside the loop
+            Scanner sc = new Scanner(System.in);
 
             while (true) {
                 displayMenu();
@@ -47,23 +47,53 @@ public class Client {
                         addNewTask2(out, in, sc);
                         break;
                     case "4":
-//                        deleteTaskById();
+                        deleteNewTaskById(out, in, sc);
                         break;
                     case "5":
-//                        updateTask();
+                        // Request the list of image file names from the server
+                        requestImageList(out);
+
+                        // Receive and process the list of image file names from the server
+                        try {
+                            String[] imageList = receiveImageList(in);
+                            System.out.println("List of images:");
+                            for (int i = 0; i < imageList.length; i++) {
+                                System.out.println((i+1) + ". " + imageList[i]);
+                            }
+
+                            // Prompt the user to select an image
+                            System.out.println("Please enter the index of the image you want to download:");
+                            int selectedIndex = Integer.parseInt(sc.nextLine());
+
+                            // After receiving the user's selected index
+                            if (selectedIndex < 1 || selectedIndex > imageList.length) {
+                                System.out.println("Invalid index. Please select a valid index.");
+                            } else {
+                                // Send request for the selected image
+                                String selectedImage = imageList[selectedIndex - 1];
+                                requestImage(selectedImage, out);
+
+                                // Receive and save the selected image
+                                receiveImage(selectedImage, socket.getInputStream());
+                                System.out.println("Image downloaded successfully.");
+                            }
+                        } catch (IOException e) {
+                            System.err.println("Error receiving image list: " + e.getMessage());
+                        }
                         break;
-                    case "6":
-//                        filterTasks();
-                        break;
-                    case "7":
-//                        JsonConversionOfTasks();
-                        break;
-                    case "8":
-//                        JsonFormEntityByKey();
-                        break;
-                    case "0":
-                        System.out.println("Exiting...");
+                    case "14":
+                        System.out.println("exiting task app + Notifying server...");
+                        out.println("QUITTING");
+                        try {
+                            out.close();
+                            in.close();
+                            consoleInput.close();
+                            socket.close();
+                        } catch (IOException e) {
+                            System.err.println("Sorry there was an error closing resources: " + e.getMessage());
+                        }
                         System.exit(0);
+                        break;
                     default:
                         System.out.println("Invalid choice. Please enter a number between 1 and 10.");
                 }
@@ -81,9 +111,10 @@ public class Client {
         System.out.println("=========================================");
         System.out.println("|        1 (9). Display Tasks by ID     |");
         System.out.println("|        2.(10) Display All Tasks       |");
-        System.out.println("|        3.(11) Add Task                |");
-        System.out.println("|        4.(12) Delete Task             |");
-        System.out.println("|        5.(13) Get Images list        |");
+        System.out.println("|        3.(11) Add Task         !      |");
+        System.out.println("|        4.(12) Delete Task      !      |");
+        System.out.println("|        5.(13) Get Images list    !    |");
+        System.out.println("|        5.(14) Quit                    |");
 
 
 
@@ -264,8 +295,47 @@ public class Client {
         return in.readLine();
     }
 
+    private void deleteNewTaskById(PrintWriter out, BufferedReader in, Scanner sc) {
+        try {
+            System.out.println("Enter the ID of the task you want to delete:");
+            int taskId = sc.nextInt();
+            sc.nextLine(); //empties the buffer :3
 
+            out.println("DELETE_TASK:" + taskId); //send the task id to the server
+            String response = in.readLine(); //get the response from the server
+            System.out.println(response);
+        } catch (Exception e) {
+            System.err.println("Error communicating with server: " + e.getMessage());
+        }
+    }
+
+    private void requestImageList(PrintWriter out) {
+        out.println("GET_IMAGE_LIST");
+    }
+
+    private String[] receiveImageList(BufferedReader in) throws IOException {
+        Gson gson = new Gson();
+        String jsonImageList = in.readLine();
+        return gson.fromJson(jsonImageList, String[].class);
+    }
+
+    private void requestImage(String fileName, PrintWriter out) {
+        out.println("REQUEST_IMAGE:" + fileName);
+    }
+
+    private static void receiveImage(String fileName, InputStream inputStream) throws IOException {
+        int bytes;
+        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+        byte[] buffer = new byte[4 * 1024];
+        while ((bytes = inputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer, 0, bytes);
+        }
+        fileOutputStream.close();
+    }
 }
+
+
+
 
 
 
