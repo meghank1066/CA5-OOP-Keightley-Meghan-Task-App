@@ -15,7 +15,7 @@ import com.dkit.oop.sd2.Exceptions.DaoException;
 import com.google.gson.Gson;
 
 public class Server {
-    final int SERVER_PORT_NUMBER = 8889;
+    final int SERVER_PORT_NUMBER = 8888;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -66,6 +66,8 @@ class ClientHandler implements Runnable {
                 displayEntityById(id, out);
             } else if (requestType.equals("get all")) {
                 displayAllEntities(out);
+            } else if (requestType.equals("ADD_NEW_TASK")) {
+                addNewTask2(in, out);
             } else {
                 out.println("Unsupported request type: " + requestType);
             }
@@ -74,8 +76,53 @@ class ClientHandler implements Runnable {
         }
     }
 
-    //feature 9
-    // meghan
+//    //feature 9
+//    // meghan
+//    private void displayEntityById(int id, PrintWriter out) {
+//        try {
+//            TaskDaoInterface taskDao = new MySqlTaskDAO();
+//            Task task = taskDao.getNewTaskById(id);
+//            Gson gson = new Gson();
+//            String jsonResponse = (task != null) ? gson.toJson(task) : "{\"error\": \"Entity not found\"}";
+//            out.println(jsonResponse);
+//        } catch (DaoException e) {
+//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+//        }
+//    }
+//
+//    //feature 10
+//    //meghan
+//    private void displayAllEntities(PrintWriter out) {
+//        try {
+//            TaskDaoInterface taskDao = new MySqlTaskDAO();
+//            List<Task> tasks = taskDao.getnewAllTasks();
+//            Gson gson = new Gson();
+//            String jsonResponse = gson.toJson(tasks);
+//            out.println(jsonResponse);
+//        } catch (DaoException e) {
+//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+//        }
+//    }
+//
+//    //new task
+//
+//    //feature 11
+//    // meghan
+//    private void addNewTask2(BufferedReader in, PrintWriter out) {
+//        try {
+//            String json = in.readLine();
+//            Gson gson = new Gson();
+//            Task task = gson.fromJson(json, Task.class);
+//            TaskDaoInterface taskDao = new MySqlTaskDAO();
+//            Task newTask = taskDao.addTask(task);
+//            String jsonResponse = gson.toJson(newTask);
+//            out.println(jsonResponse);
+//        } catch (DaoException | IOException e) {
+//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+//        }
+//    }
+
+    // Feature 9: Display Task by ID
     private void displayEntityById(int id, PrintWriter out) {
         try {
             TaskDaoInterface taskDao = new MySqlTaskDAO();
@@ -88,12 +135,23 @@ class ClientHandler implements Runnable {
         }
     }
 
-    //feature 10
-    //meghan
+    // Feature 10: Display All Tasks
+//    private void displayAllEntities(PrintWriter out) {
+//        try {
+//            TaskDaoInterface taskDao = new MySqlTaskDAO();
+//            List<Task> tasks = taskDao.getAllTasks(); // Update to use getAllTasks method
+//            Gson gson = new Gson();
+//            String jsonResponse = gson.toJson(tasks);
+//            out.println(jsonResponse);
+//        } catch (DaoException e) {
+//            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+//        }
+//    }
+
     private void displayAllEntities(PrintWriter out) {
         try {
             TaskDaoInterface taskDao = new MySqlTaskDAO();
-            List<Task> tasks = taskDao.getnewAllTasks();
+            List<Task> tasks = taskDao.getAllTasks(); // Update to use getAllTasks method
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(tasks);
             out.println(jsonResponse);
@@ -101,4 +159,28 @@ class ClientHandler implements Runnable {
             out.println("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
+
+    // Feature 11: Add New Task
+    private void addNewTask2(BufferedReader in, PrintWriter out) {
+        try {
+            String json = in.readLine();
+            Gson gson = new Gson();
+            Task task = gson.fromJson(json, Task.class);
+            TaskDaoInterface taskDao = new MySqlTaskDAO();
+            Task newTask = taskDao.addNewTask(task);
+
+            // After adding the new task, retrieve all tasks from the database
+            List<Task> allTasks = taskDao.getnewAllTasks();
+            String jsonResponse = gson.toJson(allTasks);
+            out.println(jsonResponse);
+        } catch (DaoException | IOException e) {
+            out.println("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+
+
+
 }
+
+

@@ -2,6 +2,7 @@ package com.dkit.oop.sd2.DAOs;
 
 import com.dkit.oop.sd2.DTOs.Task;
 import com.dkit.oop.sd2.Exceptions.DaoException;
+
 import java.util.List;
 
 
@@ -52,15 +53,18 @@ public interface TaskDaoInterface {
     /**
      * Meghan Keightley 08 April 2024
      */
-//  Feature 8 -  Convert a single Entity by Key as a json String
+
+    // Feature 8 -  Convert a single Entity by Key as a json String
     String JsonFormEntityByKey(int taskId) throws DaoException;
 
-//feature 9
-
-public Task getNewTaskById(int id) throws DaoException;
+    //feature 9
+    public Task getNewTaskById(int id) throws DaoException;
 
     //feature 10
     public List<Task> getnewAllTasks() throws DaoException;
+
+    //feature 11
+    public Task addNewTask(Task task) throws DaoException;
 
 
 //end of file
